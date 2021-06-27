@@ -153,14 +153,17 @@ const Home = (props) => {
             {
                 loading === false ?
                     (
-                        <div className="docs-card" >
-                            <div className="saved-docs-div" >
-                                <span className="material-icons  saved-icon" >
-                                    save
-                                </span>
-                                <h3 className="heading-secondary" >Saved Documents</h3>
-                            </div>
-
+                        <div className="docs-list" style={{padding:"50px"}}>
+                            <table class='ui fixed table' >
+                            <thead>
+                                <tr>
+                                <th>Name</th>
+                                <th>Owner/Colabrator</th>
+                                <th>Edit</th>
+                                <th>Settings</th>
+                                <th>Delete</th>
+                                </tr>
+                            </thead>
                             {
                                 docs.map((doc, index) => {
                                     return (
@@ -175,8 +178,8 @@ const Home = (props) => {
                                     )
                                 })
                             }
-
-                        </div>
+                            </table>
+                            </div>
                     )
                     : null
             }

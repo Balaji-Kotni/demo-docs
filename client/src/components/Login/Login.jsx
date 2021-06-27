@@ -74,7 +74,7 @@ const Signup = () => {
                                     <label>
                                         Passwrod
                                     </label>
-                                    <input type='text' name='user' placeholder='Password' value={password}
+                                    <input type='password' name='user' placeholder='Password' value={password}
                                         onChange={(e) => setPassword(e.target.value)} />
                                 </div>
                                 <button className="ui primary labeled icon button" type="submit">

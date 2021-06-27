@@ -14,12 +14,12 @@ const HomePage = () => {
         <div className="main-div" >
 
             <div className="main-heading--div" >
-                <h1 className="main-heading"><span style={{ color: '#623C3D' }} >simple</span><span style={{ color: '#6B645C' }} >Docs</span></h1>
+                <h1 className="main-heading">E-Docs</h1>
             </div>
 
             <div className="main-content--div" >
                 <div className="main-content-image--div" >
-                    <img src={imageName.default} height="300" width="450" alt="simpleDocsSS"  ></img>
+                    <h2>WELCOME</h2>
                 </div>
 
                 <div className="headerDivider" ></div>
@@ -28,16 +28,6 @@ const HomePage = () => {
                     {/* Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi nobis perferendis veritatis odit minus quibusdam reiciendis vero temporibus error repellendus. */}
 
                     <h2 className="heading-secondary-home" >Web app for managing documents!</h2>
-                    <p>
-                        
-                        With a simple rich text editor made with slatejs!
-                        Manage documents easily without any hassle.
-                        Users can now also be added / removed as collaborators.
-                        With live notifications and badges.
-                        Live collaboration is now a feature!
-
-                    </p>
-
                     <button className="login-button--sm"
                         onClick={
                             () => {

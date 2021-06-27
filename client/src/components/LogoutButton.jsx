@@ -14,41 +14,7 @@ const LogoutButton = () => {
 
     return (
         <div>
-            <button
-                onClick={logout}
-                style={{
-                    padding: '10px',
-                    width: "100px",
-                    backgroundColor: 'teal',
-                    border: 'none',
-                    outline: 'none',
-                    cursor: "pointer",
-                    color: '#eee',
-                    borderRadius: "15px",
-                    fontFamily: "Cutive, serif"
-                }}
-            >
-                Log Out
-            </button>
-
-            {/* <a
-                onClick={logout}
-                href="/login"
-                style={{
-                    padding: '10px',
-                    width: "100px",
-                    backgroundColor: 'teal',
-                    border: 'none',
-                    outline: 'none',
-                    cursor: "pointer",
-                    color: '#eee',
-                    borderRadius: "15px",
-                    fontFamily: "Cutive, serif"
-                }}
-            >
-                Log Out
-            </a> */}
-
+             <button className="ui inverted grey button" onClick={logout}>Log Out</button>
         </div>
     )
 }

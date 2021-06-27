@@ -2,52 +2,60 @@ import React from 'react'
 
 const DocListItem = ({ doc, currentUser, viewDocHandler, manageDocumentHandler, deleteDocHandler }) => {
     return (
-        <div className="single-doc" >
-            <div className="name-div" >
-                <h3
-                    className="heading-secondary doc-name"
-                    onClick={id => viewDocHandler(doc._id)}
-                >
-                    {doc.name}
-                </h3>
-            </div>
-
-            {
-                doc.collaborators.includes(currentUser._id)
-
-                    ? <div className="user-role--div" >Collaborator</div>
-
-                    : <div className="user-role--div" >Owner</div>
-            }
-
-
-            {
-                doc.collaborators.includes(currentUser._id)
-                    ? <div className="buttons--div" ></div>
-                    : (<div className="buttons--div" >
-
-                        <span
-                            onClick={
-                                (id) => manageDocumentHandler(
-                                    doc._id
-                                )
-                            }
-                            className="material-icons manage-btn"
-                        >
-                            settings
-                        </span>
-
-                        <span
-                            className="material-icons delete-doc-icon"
-                            onClick={(id) => deleteDocHandler(doc._id)}
-                        >delete
-                        </span>
-
-
-                    </div>)
-            }
-
-        </div>
+        <tbody>
+        <tr>
+          <td>{doc.name}</td>
+          {doc.collaborators.includes(currentUser._id) ? (
+            <td>Collaborator</td>
+          ) : (
+            <td>Owner</td>
+          )}
+          <td>
+            <button
+              className='ui secondary button'
+              onClick={id => viewDocHandler(doc._id)}
+            >
+              EDIT
+            </button>
+          </td>
+          {doc.collaborators.includes(currentUser._id) ? (
+              <td>
+              <button
+                  className='ui disabled secondary button'
+              >
+                  settings
+              </button>
+          </td>
+          ) : (
+                <td className='buttons--div'>
+                    <button
+                        className='ui secondary button'
+                        onClick={id => manageDocumentHandler(doc._id)}
+                    >
+                        settings
+                    </button>
+                </td>
+          )}
+          {doc.collaborators.includes(currentUser._id) ? (
+              <td> 
+              <button
+              className='ui disabled secondary button'
+            >
+              Delete
+            </button>
+          </td>
+          ) : (
+            <td> 
+            <button
+            className='ui secondary button'
+            onClick={id => deleteDocHandler(doc._id)}
+          >
+            Delete
+          </button>
+          </td>
+          )}
+        </tr>
+      </tbody>
     )
 }
 

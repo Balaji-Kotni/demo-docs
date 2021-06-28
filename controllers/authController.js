@@ -3,7 +3,7 @@ const DocModel = require("../models/docModel");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const NotificationModel = require("../models/notificationModel");
-const { JWT_SECRET, JWT_EXPIRES_IN } = require("../config/keys");
+const { JWT_SECRET } = require("../config/keys");
 
 const signToken = id => {
   return jwt.sign({ id }, JWT_SECRET, {

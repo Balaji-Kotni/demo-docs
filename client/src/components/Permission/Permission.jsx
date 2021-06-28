@@ -4,7 +4,6 @@ import { Redirect } from "react-router"
 import AuthContext from "../../context/AuthContext"
 import './Permission.css'
 import { useHistory } from 'react-router-dom'
-
 import io from "socket.io-client";
 const socket = io()
 
@@ -68,7 +67,8 @@ const Permission = (props) => {
 
             {
                 props.location.state
-                    ? (
+                
+                    ?  (
                         <div className="permission-container" >
 
                             <div className="err-div" >

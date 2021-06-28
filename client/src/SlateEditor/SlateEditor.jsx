@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react'
 import { createEditor, Editor, Transforms, Element as SlateElement } from 'slate'
-import { Slate, Editable, withReact, useSlate } from 'slate-react'
+import { Slate, Editable, withReact, useSlate ,} from 'slate-react'
 import Elements from './Elements'
 import './SlateEditor.css'
 import Leaf from './Leaf'
@@ -9,6 +9,7 @@ import axios from 'axios'
 import AuthContext from '../context/AuthContext'
 import { Redirect } from 'react-router'
 import socketIoClient from 'socket.io-client'
+
 
 const socket = socketIoClient()
 
@@ -21,13 +22,15 @@ const SlateEditor = (props) => {
       idCopy = param[1]
     }
   }
-  const [doc, setDoc] = useState([])
+  const [doc, setDoc] = useState({})
   const [docId] = useState(idCopy)
   const [title, setTitle] = useState("")
   const [idStatus, setIdStatus] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [errorStatus, setErrorStatus] = useState("")
-
+  const [colabrators, setColabrators] = useState([])
+  const [ownerCheck, setownerCheck] = useState("")
+  const { currentUser } = useContext(AuthContext)
   const editor = useMemo(() => withReact(createEditor()), [])
   const [value, setValue] = useState([])
 
@@ -36,9 +39,9 @@ const SlateEditor = (props) => {
   const [saved, setSaved] = useState()
 
   const { loggedIn } = useContext(AuthContext)
-  const { currentUser } = useContext(AuthContext)
+
   const id = useRef(Date.now().toString() + "::UID")
-  console.log(doc.data.status);
+
   useEffect(() => {
     if (loggedIn) {
       if (!idCopy) {
@@ -47,11 +50,11 @@ const SlateEditor = (props) => {
         async function getSingleDoc() {
           try {
             const doc = await axios.get(`/api/docs/${docId}`)
+            await doc.data ? setColabrators(doc.data.data.doc.collaborators) : console.log("loading");
+            await doc.data ? setownerCheck(doc.data.data.doc.owner) : console.log("loading");
             setValue(doc.data.data.doc.content)
             setTitle(doc.data.data.doc.name)
             setSaved(true)
-            setDoc(doc)
-            
           } catch (err) {
             setErrorStatus(err.response.status)
             setErrorMessage(err.response.data.message)
@@ -59,7 +62,6 @@ const SlateEditor = (props) => {
         }
 
         getSingleDoc()
-
         socket.on('new-remote-operations', ({ editorId, operations, documentId }) => {
           if (editorId !== id.current && documentId === docId) {
             Editor.withoutNormalizing(editor, () => {
@@ -77,7 +79,6 @@ const SlateEditor = (props) => {
     }
 
   }, [docId])
-
   const renderElement = useCallback(props => {
 
     if (props.element.type === "heading-one") {
@@ -90,32 +91,42 @@ const SlateEditor = (props) => {
     }
 
   }, [])
-
+  
   const renderLeaf = useCallback(props => {
     return <Leaf {...props} />
 
   }, [])
 
   const saveDocHandler = (value) => {
+    
     async function saveDoc() {
+
       try {
         await axios.patch(`/api/docs/${docId}`, {
           content: value
         })
-
         setSaved(true)
       } catch (err) {
         setErrorStatus(err.response.status)
         setErrorMessage(err.response.data.message)
       }
     }
-
     saveDoc()
   }
-
+  const viewer = () => {
+    if (!ownerCheck === currentUser._id && !colabrators.includes(currentUser._id)){
+      console.log("your are the viewer");
+    }
+    if (ownerCheck === currentUser._id) {
+      console.log("your are the owner");
+    }
+    colabrators.includes(currentUser._id) ? console.log("not owner") : console.log("owner")
+  }
+  
   return (
-    
-    <div className="base-div" >
+    <div className="ui grid">
+      <div className="ten wide column" >
+      <div className="base-div" >
       
       {
         loggedIn && errorMessage === "You are not authorised to access this document!"
@@ -139,7 +150,7 @@ const SlateEditor = (props) => {
 
       <div className="doc-info" >
         <h3 className="doc-title" >{title}</h3>
-        
+
         <div>
           {
             saved
@@ -157,9 +168,16 @@ const SlateEditor = (props) => {
             save
           </span>
         </button>
+        <button
+          onClick={() => viewer() }
+        >
+          <span className="material-icons" >
+            getcontributors
+          </span>
+        </button>
 
       </div>
-          
+
       <Slate editor={editor} value={value} onChange={
         (value) => {
           setValue(value)
@@ -184,7 +202,7 @@ const SlateEditor = (props) => {
 
 
           const filterOps = editor.operations.filter(o => {
-            //console.log(o)
+            // console.log(o)
             if (o === null) {
               //console.log("this was null")
               return false
@@ -207,6 +225,7 @@ const SlateEditor = (props) => {
               operations: filterOps,
               documentId: docId
             })
+            console.log(filterOps)
           }
 
         }
@@ -352,6 +371,14 @@ const SlateEditor = (props) => {
         />
       </Slate>
     </div>
+      </div>
+      <div className="six wide column">
+      <div className="base-changelog-div" >
+          <h1>{console.log(value)}</h1>
+      </div>
+      </div>
+    </div>
+    
   )
 }
 

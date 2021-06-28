@@ -57,6 +57,8 @@ const {
   getUser,
   removeCollaborator,
   doesNotificationExist,
+  acceptViewerRequest,
+  removeViewer,
 } = require("./controllers/authController");
 
 // const DB = process.env.DB.replace("<password>", process.env.DB_PASS);
@@ -99,6 +101,7 @@ app.patch(
   isOwner,
   removeCollaborator
 );
+app.patch("/api/docs/:id/removeViewer", protect, isOwner, removeViewer);
 
 app.delete("/api/docs/:id", protect, isOwner, deleteDoc);
 
@@ -124,7 +127,7 @@ app.post(
 
 app.get("/api/users/notifications", protect, getNotifications);
 
-app.post("/api/users/:docId", protect, acceptRequest);
+app.post("/api/users/:docId", protect, acceptRequest, acceptViewerRequest);
 
 app.delete("/api/notifications/:id", protect, deleteNotification);
 

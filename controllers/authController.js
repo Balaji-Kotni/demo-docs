@@ -369,7 +369,6 @@ exports.acceptRequest = async function (req, res) {
     //const senderId = req.user._id
     const senderId = req.body.senderId;
     const docId = req.params.docId;
-
     const doc = await DocModel.findById(docId);
     const user = await UserModel.findById(senderId);
 
@@ -406,6 +405,136 @@ exports.acceptRequest = async function (req, res) {
       docId,
       {
         collaborators: collaboratorsNew,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      status: "success",
+      doc: updatedDoc,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+
+exports.acceptViewerRequest = async function (req, res) {
+  try {
+    //const senderId = req.user._id
+    const senderId = req.body.senderId;
+    const docId = req.params.docId;
+    const doc = await DocModel.findById(docId);
+    const user = await UserModel.findById(senderId);
+
+    if (!doc || !user) {
+      res.status(400).json({
+        status: "fail",
+        message: "error",
+      });
+      return;
+    }
+
+    if (user._id.equals(doc.owner)) {
+      res.status(400).json({
+        status: "fail",
+        message: "you are already the owner!",
+      });
+      return;
+    }
+
+    if (doc.collaborators.includes(user._id)) {
+      res.status(400).json({
+        status: "fail",
+        message: "you are already a collaborator!",
+      });
+      return;
+    }
+
+    if (doc.viewers.includes(user._id)) {
+      res.status(400).json({
+        status: "fail",
+        message: "you are already a viewer!",
+      });
+      return;
+    }
+
+    const viewersNew = [...doc.viewers];
+    viewersNew.push(user._id);
+
+    //console.log(collaboratorsNew)
+
+    const updatedDoc = await DocModel.findByIdAndUpdate(
+      docId,
+      {
+        viewers: viewersNew,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      status: "success",
+      doc: updatedDoc,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+
+exports.removeViewer = async function (req, res) {
+  try {
+    const doc = await DocModel.findById(req.params.id);
+
+    if (!doc) {
+      res.status(400).json({
+        status: "fail",
+        message: "no such document exists",
+      });
+      return;
+    }
+
+    if (!doc.collaborators) {
+      res.status(400).json({
+        status: "fail",
+        message: "This document does not have any collaborators!",
+      });
+      return;
+    }
+    if (!doc.viewers) {
+      res.status(400).json({
+        status: "fail",
+        message: "This document does not have any viewers!",
+      });
+      return;
+    }
+
+    let viewersArray = [...doc.viewers];
+
+    //console.log(collaboratorsArray)
+    //const index = collaboratorsArray.indexOf(req.body.collabId)
+    const index = viewersArray.findIndex(id => id.equals(req.body.viewerId));
+
+    //console.log(index)
+
+    if (index === -1) {
+      res.status(400).json({
+        status: "fail",
+        message: "this user is not a viewer",
+      });
+      return;
+    }
+
+    viewersArray.splice(index, 1);
+
+    const updatedDoc = await DocModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        viewers: viewersArray,
       },
       { new: true }
     );

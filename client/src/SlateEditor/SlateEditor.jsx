@@ -25,6 +25,7 @@ const SlateEditor = (props) => {
   const [doc, setDoc] = useState({})
   const [docId] = useState(idCopy)
   const [title, setTitle] = useState("")
+  const [usertype, setUsertype] = useState("")
   const [idStatus, setIdStatus] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [errorStatus, setErrorStatus] = useState("")
@@ -115,10 +116,13 @@ const SlateEditor = (props) => {
   }
   const viewer = () => {
     if (!ownerCheck === currentUser._id && !colabrators.includes(currentUser._id)){
-      console.log("your are the viewer");
+      setUsertype("viewer");
     }
     if (ownerCheck === currentUser._id) {
-      console.log("your are the owner");
+      setUsertype("owner");
+    }
+    if(colabrators.includes(currentUser._id)){
+      setUsertype("colabrator")
     }
     colabrators.includes(currentUser._id) ? console.log("not owner") : console.log("owner")
   }
@@ -131,13 +135,13 @@ const SlateEditor = (props) => {
       {
         loggedIn && errorMessage === "You are not authorised to access this document!"
           ? <Redirect to={{ pathname: "/permission", state: { message: errorMessage, docId } }} />
-          : null
+          : console.log('first condition')
       }
 
       {
         (loggedIn && errorMessage !== "You are not authorised to access this document!" && errorMessage !== "")
           ? <Redirect to={{ pathname: "/error", state: { message: errorMessage, statusCode: errorStatus } }} />
-          : null
+          : console.log('condition 2')
       }
 
       {

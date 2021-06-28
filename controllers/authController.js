@@ -7,7 +7,7 @@ const { JWT_SECRET, JWT_EXPIRES_IN } = require("../config/keys");
 
 const signToken = id => {
   return jwt.sign({ id }, JWT_SECRET, {
-    expiresIn: "2m",
+    expiresIn: "2 days",
   });
 };
 

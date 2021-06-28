@@ -21,7 +21,7 @@ const SlateEditor = (props) => {
       idCopy = param[1]
     }
   }
-
+  const [doc, setDoc] = useState([])
   const [docId] = useState(idCopy)
   const [title, setTitle] = useState("")
   const [idStatus, setIdStatus] = useState("")
@@ -36,9 +36,9 @@ const SlateEditor = (props) => {
   const [saved, setSaved] = useState()
 
   const { loggedIn } = useContext(AuthContext)
-
+  const { currentUser } = useContext(AuthContext)
   const id = useRef(Date.now().toString() + "::UID")
-
+  console.log(doc.data.status);
   useEffect(() => {
     if (loggedIn) {
       if (!idCopy) {
@@ -50,6 +50,8 @@ const SlateEditor = (props) => {
             setValue(doc.data.data.doc.content)
             setTitle(doc.data.data.doc.name)
             setSaved(true)
+            setDoc(doc)
+            
           } catch (err) {
             setErrorStatus(err.response.status)
             setErrorMessage(err.response.data.message)
@@ -112,9 +114,9 @@ const SlateEditor = (props) => {
   }
 
   return (
-
+    
     <div className="base-div" >
-
+      
       {
         loggedIn && errorMessage === "You are not authorised to access this document!"
           ? <Redirect to={{ pathname: "/permission", state: { message: errorMessage, docId } }} />
@@ -137,7 +139,7 @@ const SlateEditor = (props) => {
 
       <div className="doc-info" >
         <h3 className="doc-title" >{title}</h3>
-
+        
         <div>
           {
             saved
@@ -157,7 +159,7 @@ const SlateEditor = (props) => {
         </button>
 
       </div>
-
+          
       <Slate editor={editor} value={value} onChange={
         (value) => {
           setValue(value)

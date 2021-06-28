@@ -2,9 +2,11 @@ import React from 'react'
 
 const DocListItem = ({ doc, currentUser, viewDocHandler, manageDocumentHandler, deleteDocHandler }) => {
     return (
+      
         <tbody>
         <tr>
           <td>{doc.name}</td>
+          
           {doc.collaborators.includes(currentUser._id) ? (
             <td>Collaborator</td>
           ) : (

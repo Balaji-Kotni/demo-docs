@@ -154,7 +154,7 @@ const Home = (props) => {
                 loading === false ?
                     (
                         <div className="docs-list" style={{padding:"50px"}}>
-                            <table class='ui fixed table' >
+                            <table className='ui fixed table' >
                             <thead>
                                 <tr>
                                 <th>Name</th>
@@ -167,6 +167,7 @@ const Home = (props) => {
                             {
                                 docs.map((doc, index) => {
                                     return (
+                                        <>
                                         <DocListItem 
                                             key={index} 
                                             doc={doc} 
@@ -175,6 +176,7 @@ const Home = (props) => {
                                             manageDocumentHandler={manageDocumentHandler}
                                             deleteDocHandler={deleteDocHandler}
                                         />
+                                        </>
                                     )
                                 })
                             }

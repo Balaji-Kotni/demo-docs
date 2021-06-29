@@ -87,6 +87,7 @@ const Notifications = () => {
                     senderId: senderId
                 })
 
+
                 //console.log(response.data)
 
                 if (response.data.status === "success") {
@@ -125,6 +126,56 @@ const Notifications = () => {
 
         declineRequest()
     }
+    const acceptViewerHandler = (senderId, docId, notificationId) => {
+        //console.log(senderId, docId)
+        async function acceptViewerRequest() {
+
+            try {
+                setBtnDis(true)
+                const response = await axios.post(`/api/users/viewers/${docId}`, {
+                    senderId: senderId
+                })
+
+
+                //console.log(response.data)
+
+                if (response.data.status === "success") {
+                    const response = await axios.delete(`/api/notifications/${notificationId}`)
+                    if (response.data.status === "success") {
+                        getNotifications()
+                        setBtnDis(false)
+
+                        socket.emit("notification-deleted-sent", { status: "success" })
+                        
+                    }
+                }
+
+            } catch (err) {
+                //console.log(err.response.data)
+                setErrorMessage(err.response.data.message)
+            }
+
+
+            //console.log(response.data)
+        }
+        acceptViewerRequest()
+
+    }
+    const declineViewerHandler = (notificationId) => {
+
+        async function declineViewerRequest() {
+            const response = await axios.delete(`/api/notifications/${notificationId}`)
+
+            if (response.data.status === "success") {
+                getNotifications()
+                socket.emit("notification-deleted-sent", { status: "success" })
+            }
+
+        }
+
+        declineViewerRequest()
+    }
+    
 
     return (
 
@@ -159,7 +210,7 @@ const Notifications = () => {
 
                                                     <div className="notif-div" >{notification.notification}</div>
 
-                                                    <div>
+                                                    {/* <div>
                                                         <button
                                                             onClick={
                                                                 () => {
@@ -178,6 +229,27 @@ const Notifications = () => {
                                                             className="decline-btn"
                                                             disabled={btnDis}
                                                         >Decline</button>
+
+                                                    </div> */}
+                                                    <div>
+                                                        <button
+                                                            onClick={
+                                                                () => {
+                                                                    acceptViewerHandler(notification.sender, notification.doc, notification._id)
+                                                                }
+                                                            }
+                                                            className="accept-btn"
+                                                            disabled={btnDis}
+
+                                                        >ViewerAccept</button>
+
+                                                        <button
+                                                            onClick={
+                                                                () => declineViewerHandler(notification._id)
+                                                            }
+                                                            className="decline-btn"
+                                                            disabled={btnDis}
+                                                        >ViewerDecline</button>
 
                                                     </div>
 

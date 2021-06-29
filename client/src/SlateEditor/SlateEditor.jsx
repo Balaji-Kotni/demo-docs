@@ -9,7 +9,7 @@ import axios from 'axios'
 import AuthContext from '../context/AuthContext'
 import { Redirect } from 'react-router'
 import socketIoClient from 'socket.io-client'
-
+import { withHistory, History,HistoryEditor } from 'slate-history'
 
 const socket = socketIoClient()
 
@@ -22,16 +22,18 @@ const SlateEditor = (props) => {
       idCopy = param[1]
     }
   }
-  const [doc, setDoc] = useState({})
   const [docId] = useState(idCopy)
   const [title, setTitle] = useState("")
+  const [read, setRead] = useState("False")
   const [usertype, setUsertype] = useState("")
   const [idStatus, setIdStatus] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [errorStatus, setErrorStatus] = useState("")
   const [colabrators, setColabrators] = useState([])
+  const [viewers, setViewers] = useState([])
   const [ownerCheck, setownerCheck] = useState("")
-  const { currentUser } = useContext(AuthContext)
+  const [UserData, setUserData] = useState(undefined)
+  const [loading, setLoading] = useState(true)
   const editor = useMemo(() => withReact(createEditor()), [])
   const [value, setValue] = useState([])
 
@@ -42,7 +44,7 @@ const SlateEditor = (props) => {
   const { loggedIn } = useContext(AuthContext)
 
   const id = useRef(Date.now().toString() + "::UID")
-
+  
   useEffect(() => {
     if (loggedIn) {
       if (!idCopy) {
@@ -51,11 +53,14 @@ const SlateEditor = (props) => {
         async function getSingleDoc() {
           try {
             const doc = await axios.get(`/api/docs/${docId}`)
-            await doc.data ? setColabrators(doc.data.data.doc.collaborators) : console.log("loading");
-            await doc.data ? setownerCheck(doc.data.data.doc.owner) : console.log("loading");
             setValue(doc.data.data.doc.content)
             setTitle(doc.data.data.doc.name)
+            setColabrators(doc.data.data.doc.collaborators)
+            setViewers(doc.data.data.doc.viewers)
+            setownerCheck(doc.data.data.doc.owner)
             setSaved(true)
+
+            
           } catch (err) {
             setErrorStatus(err.response.status)
             setErrorMessage(err.response.data.message)
@@ -114,21 +119,28 @@ const SlateEditor = (props) => {
     }
     saveDoc()
   }
-  const viewer = () => {
-    if (!ownerCheck === currentUser._id && !colabrators.includes(currentUser._id)){
-      setUsertype("viewer");
-    }
-    if (ownerCheck === currentUser._id) {
-      setUsertype("owner");
-    }
-    if(colabrators.includes(currentUser._id)){
-      setUsertype("colabrator")
-    }
-    colabrators.includes(currentUser._id) ? console.log("not owner") : console.log("owner")
+
+  async function getUserData() {
+    const response = await axios.get('/api/users/isLoggedIn', { withCredentials: true })
+    setUserData(response.data.user._id)
+    setLoading(false)
   }
+  useEffect(() => {
+    getUserData()
+
+  }, [])
+  
+  
   
   return (
     <div className="ui grid">
+      {
+                loading === true
+                    ? <div className="ui active dimmer">
+                    <div className="ui large text loader">Loading..</div>
+                  </div>
+                    : null
+      }
       <div className="ten wide column" >
       <div className="base-div" >
       
@@ -151,7 +163,8 @@ const SlateEditor = (props) => {
       {
         loggedIn ? null : <Redirect to="/login" />
       }
-
+      
+      
       <div className="doc-info" >
         <h3 className="doc-title" >{title}</h3>
 
@@ -172,17 +185,18 @@ const SlateEditor = (props) => {
             save
           </span>
         </button>
-        <button
+        {/* <button
           onClick={() => viewer() }
         >
           <span className="material-icons" >
             getcontributors
           </span>
-        </button>
+        </button> */}
 
       </div>
 
       <Slate editor={editor} value={value} onChange={
+        
         (value) => {
           setValue(value)
           //setSaved(false)
@@ -200,6 +214,7 @@ const SlateEditor = (props) => {
                 }
 
                 saveState()
+                
               }
             }
           )
@@ -311,8 +326,10 @@ const SlateEditor = (props) => {
           />
 
         </div>
-
-        <Editable
+        {
+          viewers.includes(UserData) ? (
+            <Editable
+            readOnly
           renderElement={renderElement}
           renderLeaf={renderLeaf}
 
@@ -373,6 +390,73 @@ const SlateEditor = (props) => {
             }
           }}
         />
+          ) : (
+            <Editable
+          renderElement={renderElement}
+          renderLeaf={renderLeaf}
+
+          onKeyUp={
+            () => {
+              if (timer) {
+                window.clearTimeout(timer)
+              }
+
+              setTimer(setTimeout(() => {
+                //console.log("done")
+                saveDocHandler(value)
+              }, 1000))
+
+            }
+          }
+
+          onKeyPress={
+            () => {
+              if (timer) {
+                window.clearTimeout(timer)
+              }
+              //console.log("typing")
+            }
+          }
+
+
+          onKeyDown={event => {
+
+            if (!event.ctrlKey) {
+              return
+            }
+
+            switch (event.key) {
+
+              case 'b':
+                event.preventDefault()
+                toggleMark(editor, "bold")
+                break
+
+              case 'i':
+                event.preventDefault()
+                toggleMark(editor, "italic")
+                break
+
+              case 'u':
+                event.preventDefault()
+                toggleMark(editor, "underline")
+                break
+
+              case '`':
+                event.preventDefault()
+                toggleMark(editor, "code")
+                break
+
+              default: break
+
+            }
+          }}
+        />
+          )
+        }
+        
+        
+        
       </Slate>
     </div>
       </div>
@@ -388,6 +472,7 @@ const SlateEditor = (props) => {
 
 const MarkButton = ({ format, icon, saveDoc, timer, setTimer }) => {
   const editor = useSlate()
+  
   return (
     <Button
       active={isMarkActive(editor, format)}

@@ -285,7 +285,8 @@ exports.isOwnerOrCollaborator = async function (req, res, next) {
 
     if (
       !req.user._id.equals(doc.owner) &&
-      !doc.collaborators.includes(req.user._id)
+      !doc.collaborators.includes(req.user._id) &&
+      !doc.viewers.includes(req.user._id)
     ) {
       res.status(400).json({
         status: "fail",

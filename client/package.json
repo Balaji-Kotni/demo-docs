@@ -16,6 +16,7 @@
     "react-scripts": "4.0.2",
     "react-toastify": "^7.0.3",
     "slate": "^0.59.0",
+    "slate-history": "^0.62.0",
     "slate-react": "^0.59.0",
     "socket.io-client": "^4.0.0",
     "uuid": "^8.3.2",

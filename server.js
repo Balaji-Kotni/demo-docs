@@ -127,7 +127,9 @@ app.post(
 
 app.get("/api/users/notifications", protect, getNotifications);
 
-app.post("/api/users/:docId", protect, acceptRequest, acceptViewerRequest);
+app.post("/api/users/:docId", protect, acceptRequest);
+
+app.post("/api/users/viewers/:docId", protect, acceptViewerRequest);
 
 app.delete("/api/notifications/:id", protect, deleteNotification);
 

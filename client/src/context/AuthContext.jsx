@@ -24,7 +24,6 @@ const AuthContextProvider = (props) => {
 
     const [loggedIn, setLoggedIn] = useState(undefined)
     const [currentUser, setCurrentUser] = useState(undefined)
-
     const history = useHistory()
 
     const onClickHandler = () => {
@@ -69,7 +68,6 @@ const AuthContextProvider = (props) => {
         const response = await axios.get('/api/users/isLoggedIn', { withCredentials: true })
         setLoggedIn(response.data.loggedIn)
         setCurrentUser(response.data.user)
-
     }
 
     useEffect(() => {

@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import CollabListItem from '../CollabListItem/CollabListItem'
-
+import ViewersListItem from '../ViewersListItem/ViewersListItem'
 const ManageDoc = (props) => {
 
     const stateProp = props.location.state ? props.location.state.id : null
@@ -14,14 +14,15 @@ const ManageDoc = (props) => {
     const [title, setTitle] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
     const [collaborators, setCollaborators] = useState([])
+    const [viewers, setViewers] = useState([])
     const [loading, setLoading] = useState(true)
 
     async function getInitialStates() {
         const response = await axios.get(`/api/docs/populated/${id}`)
-
+        console.log(response)
         setTitle(response.data.data.doc.name)
         setCollaborators(response.data.data.doc.collaborators)
-
+        setViewers(response.data.data.doc.viewers)
         setLoading(false)
     }
 
@@ -73,7 +74,7 @@ const ManageDoc = (props) => {
         async function removeInner() {
 
             try {
-                //console.log(collaborator)
+                // console.log(collaborator)
                 const response = await axios.patch(
                     `/api/docs/${id}/removeCollaborator`,
                     { collabId: collaborator._id }
@@ -101,6 +102,40 @@ const ManageDoc = (props) => {
         }
 
         removeInner()
+
+    }
+    const removeViewer = (viewer) => {
+        async function removeViewerInner() {
+
+            try {
+                console.log(viewer)
+                const response = await axios.patch(
+                    `/api/docs/${id}/removeViewer`,
+                    { viewerId: viewer }
+                )
+
+                // console.log(response.data)
+                if (response.data.status === "success") {
+                    setViewers(
+                        (prevState) => {
+                            return prevState.filter(ele => ele._id !== viewer._id)
+                        }
+                    )
+
+                    toast.error("Viewer Removed!", {
+                        position: toast.POSITION.TOP_LEFT,
+                        autoClose: 2000
+                    })
+                }
+
+            } catch (err) {
+                //console.log(err)
+                setErrorMessage(err.response.data.message)
+            }
+
+        }
+
+        removeViewerInner()
 
     }
 
@@ -170,7 +205,7 @@ const ManageDoc = (props) => {
                                                 </form>
                                             </div>
 
-                                            <div className="docs-card" >
+                                            <div className="docs-card" style={{ marginTop:"10px" }} >
 
                                                 <div className="saved-docs-div" >
                                                     <span className="material-icons  saved-icon" >
@@ -182,6 +217,9 @@ const ManageDoc = (props) => {
                                                 {
                                                     collaborators.map(
                                                         (collaborator, index) => {
+                                                            {
+                                                                console.log(collaborator)
+                                                            }
                                                             return (
                                                                 <CollabListItem
                                                                     key={index}
@@ -192,6 +230,31 @@ const ManageDoc = (props) => {
                                                         }
                                                     )
                                                 }
+                                                
+                                            </div>
+                                            <div className="docs-card" >
+
+                                                <div className="saved-docs-div" >
+                                                    <span className="material-icons  saved-icon" >
+                                                        group
+                                                    </span>
+                                                    <h3 className="heading-secondary" >Viewers</h3>
+                                                </div>
+                                                
+                                                {
+                                                    viewers.map(
+                                                        (viewer, index) => {
+                                                            return (
+                                                                <ViewersListItem
+                                                                    key={index}
+                                                                    viewer={viewer}
+                                                                    removeViewer={removeViewer}
+                                                                />
+                                                            )
+                                                        }
+                                                    )
+                                                }
+                                                
                                             </div>
 
                                         </div>

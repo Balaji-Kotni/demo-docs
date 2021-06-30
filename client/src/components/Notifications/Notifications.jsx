@@ -13,6 +13,7 @@ const Notifications = () => {
     const { loggedIn } = useContext(AuthContext)
     const [loading, setLoading] = useState(true)
     const [notificationsArray, setNotificationsArray] = useState([])
+    const [senderusername, setSenderUserName] = useState([])
     const [btnDis, setBtnDis] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
 
@@ -45,6 +46,8 @@ const Notifications = () => {
                 const response = await axios.get('/api/users/notifications')
                 //console.log(response.data)
                 setNotificationsArray(response.data.notifications)
+                console.log(response.data);
+                setSenderUserName(response.data.username)
                 setLoading(false)
                 //buttonRef.current.disabled = true
                 //setBtnDis(true)
@@ -178,91 +181,73 @@ const Notifications = () => {
     
 
     return (
-
         <>
             {
-                loading === true ? <div className="medium progress" ><div>Loading...</div></div>
-                    : (
-                        <div className="notifications-container" >
-
-                            {
+                loading === true ? (
+                    <div className="medium progress" ><div>Loading...</div></div>
+                ) : (
+                    <div className="ui container" >
+                        {
                                 errorMessage
                                     ? <Redirect to={{ pathname: "/error", state: { message: errorMessage } }} />
                                     : null
-                            }
-
-                            {
+                        }
+                        {
                                 !loggedIn
                                     ? <Redirect to="/login" />
                                     : null
-                            }
-
-                            <div className="heading-secondary" >
-                                <h2>Your Notifications</h2>
-                            </div>
-
-                            {
-                                notificationsArray
-                                    ? notificationsArray.map((notification, index) => {
-                                        if (notification) {
-                                            return (
-                                                <div key={index} className="single-notification" >
-
-                                                    <div className="notif-div" >{notification.notification}</div>
-
-                                                    {/* <div>
-                                                        <button
-                                                            onClick={
+                        }
+                        <table className="ui celled structured table" style={{marginTop: "20px"}}>
+                                <thead>
+									<tr>
+										<th rowSpan="2">Name</th>
+										<th rowSpan="2">message</th>
+										<th rowSpan="2">Accept/Decline</th>
+									</tr>
+								</thead>
+                                {
+                                    notificationsArray ? (
+                                        notificationsArray.map((notification, index) => {
+                                            if(notification) {
+                                                return(
+                                                    <tbody key={index}>
+														<tr>
+														  <td rowSpan="3">John</td>
+														  <td rowSpan="3">{notification.notification}</td>
+														  <td className="top aligned">
+															<button className="ui green button" onClick={
                                                                 () => {
                                                                     acceptHandler(notification.sender, notification.doc, notification._id)
                                                                 }
-                                                            }
-                                                            className="accept-btn"
-                                                            disabled={btnDis}
-
-                                                        >Accept</button>
-
-                                                        <button
-                                                            onClick={
-                                                                () => declineHandler(notification._id)
-                                                            }
-                                                            className="decline-btn"
-                                                            disabled={btnDis}
-                                                        >Decline</button>
-
-                                                    </div> */}
-                                                    <div>
-                                                        <button
-                                                            onClick={
+                                                            } disabled={btnDis} >Accept as Colabrator</button>
+														  </td>
+														</tr>
+														<tr>
+														<td>
+															<button className="ui green button" onClick={
                                                                 () => {
                                                                     acceptViewerHandler(notification.sender, notification.doc, notification._id)
                                                                 }
-                                                            }
-                                                            className="accept-btn"
-                                                            disabled={btnDis}
-
-                                                        >ViewerAccept</button>
-
-                                                        <button
-                                                            onClick={
-                                                                () => declineViewerHandler(notification._id)
-                                                            }
-                                                            className="decline-btn"
-                                                            disabled={btnDis}
-                                                        >ViewerDecline</button>
-
-                                                    </div>
-
-                                                </div>
-                                            )
-                                        } else {
-                                            return null
-                                        }
-                                    })
-                                    : null
-                            }
-                        </div>
-                    )
+                                                            } disabled={btnDis} >Accept as Viewer</button>
+														  </td>
+														</tr>
+														<tr>
+														<td>
+															<button className="ui red button" onClick={
+                                                                () => declineHandler(notification._id)
+                                                            } disabled={btnDis} >Decline</button>
+														  </td>
+														</tr>
+													  </tbody>
+                                                )
+                                            }
+                                        }   
+                                    )
+                                        ) : null
+                                }
+                        </table>
+                    </div>
+                )
             }
         </>
     )

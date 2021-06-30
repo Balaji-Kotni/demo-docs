@@ -24,8 +24,6 @@ const SlateEditor = (props) => {
   }
   const [docId] = useState(idCopy)
   const [title, setTitle] = useState("")
-  const [read, setRead] = useState("False")
-  const [usertype, setUsertype] = useState("")
   const [idStatus, setIdStatus] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [errorStatus, setErrorStatus] = useState("")
@@ -185,23 +183,17 @@ const SlateEditor = (props) => {
             save
           </span>
         </button>
-        {/* <button
-          onClick={() => viewer() }
-        >
-          <span className="material-icons" >
-            getcontributors
-          </span>
-        </button> */}
 
       </div>
 
       <Slate editor={editor} value={value} onChange={
         
         (value) => {
+          console.log(value);
           setValue(value)
           //setSaved(false)
 
-          //console.log(editor.operations)
+          console.log(editor.operations)
           editor.operations.forEach(
             operation => {
               if (operation.type !== "set_selection" && operation.type !== "set_value") {
@@ -244,7 +236,6 @@ const SlateEditor = (props) => {
               operations: filterOps,
               documentId: docId
             })
-            console.log(filterOps)
           }
 
         }
@@ -394,7 +385,7 @@ const SlateEditor = (props) => {
             <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
-
+          
           onKeyUp={
             () => {
               if (timer) {
@@ -462,7 +453,7 @@ const SlateEditor = (props) => {
       </div>
       <div className="six wide column">
       <div className="base-changelog-div" >
-          <h1>{console.log(value)}</h1>
+          <h1>{console.log(value.children)}</h1>
       </div>
       </div>
     </div>

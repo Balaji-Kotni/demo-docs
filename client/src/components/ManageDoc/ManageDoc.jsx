@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import CollabListItem from '../CollabListItem/CollabListItem'
 import ViewersListItem from '../ViewersListItem/ViewersListItem'
+
 const ManageDoc = (props) => {
 
     const stateProp = props.location.state ? props.location.state.id : null
@@ -206,7 +207,7 @@ const ManageDoc = (props) => {
                                             </div>
 
                                             <div className="docs-card" style={{ marginTop:"10px" }} >
-
+                                            
                                                 <div className="saved-docs-div" >
                                                     <span className="material-icons  saved-icon" >
                                                         group
@@ -217,9 +218,6 @@ const ManageDoc = (props) => {
                                                 {
                                                     collaborators.map(
                                                         (collaborator, index) => {
-                                                            {
-                                                                console.log(collaborator)
-                                                            }
                                                             return (
                                                                 <CollabListItem
                                                                     key={index}

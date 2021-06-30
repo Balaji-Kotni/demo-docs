@@ -556,7 +556,6 @@ exports.doesNotificationExist = async function (req, res, next) {
   try {
     const docId = req.body.docId;
     const senderId = req.user._id;
-
     const doc = await DocModel.findById(docId);
 
     // console.log(doc.owner.equals(senderId))
@@ -602,7 +601,7 @@ exports.doesNotificationExist = async function (req, res, next) {
       return;
     }
 
-    const notification = `User ${sender.username} has requested access for the document ${doc.name}`;
+    const notification = `User has requested access for the document ${doc.name}`;
 
     const newNotification = await NotificationModel.findOne({
       type: "access request",
@@ -610,6 +609,7 @@ exports.doesNotificationExist = async function (req, res, next) {
       sender: req.user._id,
       doc: docId,
       notification: notification,
+      username: sender.username,
     });
 
     if (newNotification) {
@@ -655,6 +655,7 @@ exports.createAccessNotification = async function (req, res) {
       sender: req.user._id,
       doc: docId,
       notification: notification,
+      username: sender.username,
     });
 
     res.status(200).json({

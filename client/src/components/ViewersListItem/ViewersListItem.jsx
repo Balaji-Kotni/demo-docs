@@ -1,6 +1,7 @@
 import React from 'react'
 
 const ViewersListItem = ({ viewer, removeViewer }) => {
+    console.log(viewer);
     return (
         <div className="collaborators-div" >
             <div className="username-div" >
@@ -9,7 +10,7 @@ const ViewersListItem = ({ viewer, removeViewer }) => {
             <span className="material-icons remove-btn"
                 onClick={
                     () => {
-                        removeViewer(viewer)
+                        removeViewer(viewer._id)
                     }
                 }
             >close</span>

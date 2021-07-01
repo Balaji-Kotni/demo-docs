@@ -62,64 +62,46 @@ const Signup = () => {
                     : null
             }
 
-
-            <form className="login-form" onSubmit={(e) => handleSubmit(e)} >
-
-                <div className="text-field" >
-
-                    <input type="text" placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <span></span>
-                    {/* <label>Email</label> */}
-                </div>
-
-                <div className="text-field" >
-
-                    <input type="email" placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <span></span>
-                    {/* <label>Email</label> */}
-                </div>
-
-                <div className="text-field" >
-                    <input type="password" placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <span></span>
-                    {/* <label>Password</label> */}
-                </div>
-
-                <div className="text-field" >
-                    <input type="password" placeholder="Confirm Password"
-                        value={passwordConfirm}
-                        onChange={(e) => setPasswordConfirm(e.target.value)}
-                    />
-                    <span></span>
-                    {/* <label>Password</label> */}
-                </div>
-
-                {/* <div className="pass">
-                    <p className="pass-text" >Forgot Password?</p>
-                </div> */}
-
-                <button
-                    type="submit"
-                    className="signup-button"
-                >
-                    Sign Up
-                </button>
-
-                {/* <div className="signup--link">
-                    Not a member? Sign Up
-                </div> */}
-
-            </form>
-
+<div className="ui fluid card" style={{marginTop: "20px"}}>
+                        <div className="content">
+                            <form className='ui form' onSubmit={(e) => handleSubmit(e)}>
+                                <div className="field">
+                                    <label>
+                                        userName
+                                    </label>
+                                    <input type='text' name='user' placeholder="UserName"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)} />
+                                </div>
+                                <div className="field">
+                                    <label>
+                                        Email
+                                    </label>
+                                    <input type='text' name='user' placeholder="Email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)} />
+                                </div>
+                                <div className="field">
+                                    <label>
+                                        Password
+                                    </label>
+                                    <input type='password' name='user' placeholder='Password' value={password}
+                                        onChange={(e) => setPassword(e.target.value)} />
+                                </div>
+                                <div className="field">
+                                    <label>
+                                        Conform Password
+                                    </label>
+                                    <input type='password' name='user' placeholder='ConformPassword' value={passwordConfirm}
+                                        onChange={(e) => setPasswordConfirm(e.target.value)} />
+                                </div>
+                                <button className="ui primary labeled icon button" type="submit">
+                                    <i className="unlock alternate icon"></i>
+                                    Login
+                                </button>
+                            </form>
+                        </div>
+                    </div>
         </div>
     )
 }

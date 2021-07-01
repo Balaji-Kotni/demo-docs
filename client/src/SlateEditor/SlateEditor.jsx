@@ -9,7 +9,7 @@ import axios from 'axios'
 import AuthContext from '../context/AuthContext'
 import { Redirect } from 'react-router'
 import socketIoClient from 'socket.io-client'
-import { withHistory, History,HistoryEditor } from 'slate-history'
+import {EmailShareButton , WhatsappShareButton , LinkedinShareButton} from 'react-share'
 
 const socket = socketIoClient()
 
@@ -131,6 +131,35 @@ const SlateEditor = (props) => {
   
   
   return (
+    <>
+    <div className="ui container">
+      <div className="ui horizontal segments">
+        <div className="ui segment">
+          <EmailShareButton title="E-Doc access link." body={`this is the link to access the docment \n www.websitename.com/view?id=${docId} \n ThankYou.`}>
+          <button className="ui google plus button">
+          <i className="envelope icon"></i>
+            Gmail
+          </button>
+        </EmailShareButton>
+        </div>
+        <div className="ui segment">
+          <WhatsappShareButton url={`www.websitename.com/view?id=${docId} `} title={`Hi ,\n\nPlease find the below link to access the document \n\n`}>
+          <button className="ui green button">
+          <i className="whatsapp icon"></i>
+            WhatsApp
+          </button>
+        </WhatsappShareButton>
+        </div>
+        <div className="ui segment">
+          <LinkedinShareButton title={`this is the link to access the docment \n www.websitename.com/view?id=${docId} \n ThankYou.`} >
+          <button className="ui linkedin button">
+          <i className="linkedin icon"></i>
+            WhatsApp
+          </button>
+        </LinkedinShareButton>
+        </div>
+      </div>
+    </div>
     <div className="ui grid">
       {
                 loading === true
@@ -457,7 +486,7 @@ const SlateEditor = (props) => {
       </div>
       </div>
     </div>
-    
+    </>
   )
 }
 
